@@ -3,12 +3,12 @@ rim
 
 Remote Image Library for PHP is tool to get image types and size of remote images in optimized way.
 
-In PHP common way of getting remote image size is using [getimagesize](http://php.net/manual/en/function.getimagesize.php) function. getimagesize is painfuly slow becouse first whole image need-s to be downloaded.
+In PHP common way of getting remote image size is using [getimagesize](http://php.net/manual/en/function.getimagesize.php) function.
+Function getimagesize is painfully slow because first whole image needs to be downloaded and that takes time and bandwidth.
 
-For every image rim fetches only few bytes need to determine her type and size.
-Library uses multi thread curl compabilites so images data are fetched in parallel.
+For every image rim fetches only few bytes need to determine her type and size also library uses multi thread curl compatibilities so images data are fetched in parallel!
 
-Suppored image types are: JEPG, GIF, PNG
+Supported image types are: JPEG, GIF, PNG
 
 Licensed under the [GNU Lesser General Public Licence version 3](http://www.gnu.org/licenses/lgpl-3.0.txt)
 
