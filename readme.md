@@ -70,7 +70,7 @@ Quick examples:
 						)
 	);
 
-See [tests](/MatejB/rim/blob/master/examples/example.php) for detailed usage examples.
+See [tests](/MatejB/rim/blob/master/tests/tests.php) for detailed usage examples.
 
 
 Performance
