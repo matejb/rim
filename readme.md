@@ -6,8 +6,7 @@ Remote Image Library for PHP is tool to get image types and sizes of remote imag
 For every image only few bytes are requested need to determine her type and size.
 Also rim uses multi thread curl compabilites so images data are fetched in parallel.
 
-Licensed under the GNU Lesser General Public Licence ver 3
-(http://www.gnu.org/licenses/lgpl-3.0.txt)
+Licensed under the [GNU Lesser General Public Licence version 3](http://www.gnu.org/licenses/lgpl-3.0.txt)
 
 
 Usage
@@ -48,4 +47,4 @@ Performance
 
 Fetching image types and sizes on [Hot New Releases in Books](http://www.amazon.com/gp/new-releases/books/ref=sv_b_2) page on amazon.com
 
-![Time taken to fetch images](/MatejB/rim/tests/tests_resources/performance.jpg)
+![Time taken to fetch images](/MatejB/rim/master/tests/tests_resources/performance.jpg)
