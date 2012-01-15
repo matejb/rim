@@ -17,10 +17,10 @@ Quick examples:
     $rim = new rim();
 
 	// single image
-    $imageData = $rim->getSingleImageTypeAndSize('http://domain/path_to_png_file.png');
+    $image_data = $rim->getSingleImageTypeAndSize('http://domain/path_to_png_file.png');
 
-	// this will $imageData contain
-    $imageData = array(
+	// this will $image_data contain
+    $image_data = array(
         'type' => 'png',
         'width' => '450',
         'height' => '320'
@@ -38,6 +38,37 @@ Quick examples:
 		'max_num_of_threads' => 3, // how many threads to use, 10 is default
 	);
 	$images_data = $rim->getMultiImageTypeAndSize($images_data_input, $rim_options);
+
+	// this will $images_data contain
+	$images_data = array(
+		'png_image' => 	array(
+							'url' => 'http://domain/path_to_png_image.png',
+							'image_data' => array(
+									'type' => 'png',
+									'width' => '450',
+									'height' => '220'
+								),
+							'error' => array()
+						),
+		'gif_image' => 	array(
+							'url' => 'http://domain/path_to_gif_image.gif',
+							'image_data' => array(
+									'type' => 'gif',
+									'width' => '110',
+									'height' => '110'
+								),
+							'error' => array()
+						),
+		'jpg_image' => 	array(
+							'url' => 'http://domain/path_to_jpeg_image.jpg',
+							'image_data' => array(
+									'type' => 'png',
+									'width' => '250',
+									'height' => '120'
+								),
+							'error' => array()
+						)
+	);
 
 See [tests] for detailed usage examples.
 
