@@ -201,7 +201,7 @@ class CurlMulti
 						$recived_data = null;
 					}
 
-					$stored_thread_data = $this->_threads[$thread_data['handle']];
+					$stored_thread_data = $this->_threads[(int)$thread_data['handle']];
 
 					if (isset($stored_thread_data['callback_data']['trace']))
 					{
@@ -233,7 +233,7 @@ class CurlMulti
 
 					curl_multi_remove_handle($this->_curlMultiHandler, $thread_data['handle']);
 					curl_close($thread_data['handle']);
-					unset($this->_threads[$thread_data['handle']]);
+					unset($this->_threads[(int)$thread_data['handle']]);
 				}
 			} while ($num_of_remaining_msg > 0);
 
@@ -261,7 +261,7 @@ class CurlMulti
 	*/
 	public function getThreadDataByCurlHandler($curl_handler)
 	{
-		return (isset($this->_threads[$curl_handler])) ? $this->_threads[$curl_handler] : null;
+		return (isset($this->_threads[(int)$curl_handler])) ? $this->_threads[(int)$curl_handler] : null;
 	}
 
 	/**
@@ -353,10 +353,11 @@ class CurlMulti
 			array_shift($this->_processQueue);
 
 			$thread_handler = curl_init();
+
 			curl_setopt_array($thread_handler, $thread_data['curl_options']);
 			$thread_data['curl_handler'] = $thread_handler;
 
-			$this->_threads[$thread_handler] =& $thread_data;
+			$this->_threads[(int)$thread_handler] =& $thread_data;
 
 			curl_multi_add_handle($this->_curlMultiHandler, $thread_handler);
 			$is_filled = true;

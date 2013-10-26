@@ -82,4 +82,4 @@ Performance
 
 Fetching image types and sizes on [Hot New Releases in Books](http://www.amazon.com/gp/new-releases/books/ref=sv_b_2) page on amazon.com
 
-![Time taken to fetch images](/MatejB/rim/raw/master/tests/tests_resources/performance.jpg)
+![Time taken to fetch images](https://raw.github.com/MatejB/rim/master/tests/tests_resources/performance.jpg)

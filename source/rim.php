@@ -54,7 +54,7 @@ class rim
 			CURLOPT_HEADER         		=> false,       						// return headers
 			CURLOPT_BINARYTRANSFER		=> true,								// raw data
 			CURLOPT_FOLLOWLOCATION 		=> true,        						// follow redirects
-			CURLOPT_ENCODING       		=> "",          						// handle all encodings
+			CURLOPT_ENCODING      		=> "",          						// handle all encodings
 			CURLOPT_USERAGENT     	 	=> "rim_spider",  						// who am i
 			CURLOPT_AUTOREFERER   	 	=> true,        						// set referer on redirect
 			CURLOPT_CONNECTTIMEOUT	 	=> $options['curl_connect_timeout'],	// timeout on connect
@@ -270,7 +270,7 @@ class rim
 	{
 		$size_of_chunk = mb_strlen($data, '8bit');
 
-		$thread_data =& $this->_curlMulti->getThreadDataByCurlHandler($ch);
+		$thread_data = $this->_curlMulti->getThreadDataByCurlHandler($ch);
 		$callback_data =& $thread_data['callback_data'];
 
 		if (!isset($callback_data['streamed_buffer']))

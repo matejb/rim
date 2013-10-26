@@ -1,5 +1,7 @@
 <?php
 
+error_reporting(E_ALL);
+
 require_once(dirname(__FILE__) . '/libs/simpletest/autorun.php');
 require_once(dirname(__FILE__) . '/../source/rim.php');
 
@@ -426,5 +428,3 @@ class RimTest extends UnitTestCase
 		$this->assertEqual($result_array, $expected_result);
 	}
 }
-
-?>
