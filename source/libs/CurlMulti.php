@@ -31,6 +31,11 @@ class CurlMulti
 	public $timeLimit = null;
 
 	/**
+	 * @var integer Curl buffer size
+	 */
+	public $curlBufferSize = 256;
+
+	/**
 	 * @var array Default curl thread options
 	*/
 	public $defaultCurlThreadOptions = array();

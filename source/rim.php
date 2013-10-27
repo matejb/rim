@@ -38,12 +38,14 @@ class rim
 			'time_limit' => null,
 			'callback' => null,
 			'curl_connect_timeout' => 2,
-			'curl_timeout' => 3
+			'curl_timeout' => 3,
+			'curl_buffer_size' => 256
 		);
 		$options = ArrayFunctionHelper::arrayMerge($default_options, $options);
 
 		$this->_curlMulti = new CurlMulti();
 		$this->_curlMulti->maxThreads = $options['max_num_of_threads'];
+		$this->_curlMulti->curlBufferSize = $options['curl_buffer_size'];
 		if (!empty($options['time_limit']))
 		{
 			$this->_curlMulti->timeLimit = $options['time_limit'];
@@ -77,6 +79,7 @@ class rim
 			if ($this->profile)
 			{
 				$images_data[$key]['trace'] = array();
+				$images_data[$key]['downloaded_size_trace'] = array();
 			}
 
 			$this->_getImageData($images_data[$key]);
@@ -106,12 +109,14 @@ class rim
 			'time_limit' => null,
 			'callback' => null,
 			'curl_connect_timeout' => 2,
-			'curl_timeout' => 3
+			'curl_timeout' => 3,
+			'curl_buffer_size' => 256
 		);
 		$options = ArrayFunctionHelper::arrayMerge($default_options, $options);
 
 		$this->_curlMulti = new CurlMulti();
 		$this->_curlMulti->maxThreads = 1;
+		$this->_curlMulti->curlBufferSize = $options['curl_buffer_size'];
 		if (!empty($options['time_limit']))
 		{
 			$this->_curlMulti->timeLimit = $options['time_limit'];
@@ -214,7 +219,7 @@ class rim
 					$callback_data['image_data']['type'] = 'jpeg';
 
 					$options = array();
-					$options[CURLOPT_BUFFERSIZE] = '256';
+					$options[CURLOPT_BUFFERSIZE] = $this->_curlMulti->curlBufferSize;
 					$options[CURLOPT_RETURNTRANSFER] = '';
 					$options[CURLOPT_WRITEFUNCTION] = array($this, "_jpegTransferCallback");
 
@@ -276,6 +281,13 @@ class rim
 		if (!isset($callback_data['streamed_buffer']))
 			$callback_data['streamed_buffer'] = '';
 		$callback_data['streamed_buffer'] .= $data;
+
+		if (isset($callback_data['downloaded_size_trace']))
+		{
+			$callback_data['downloaded_size_trace'][] = array(
+				strlen($callback_data['streamed_buffer'])
+			);
+		}
 
 		if (strlen($callback_data['streamed_buffer']) < 2)
 		{
