@@ -12,6 +12,11 @@ Supported image types are: JPEG, GIF, PNG
 
 Licensed under the [GNU Lesser General Public Licence version 3](http://www.gnu.org/licenses/lgpl-3.0.txt)
 
+Notes
+-----
+
+Delete tests for production environment! Lots of large jpeg files was added inside test folder for testing purposes.
+
 
 Usage
 -----
