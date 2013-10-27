@@ -112,7 +112,8 @@ $rim_options = array(
 	'time_limit' => 2.3, // time limit in seconds, def. no time limit
 	'callback' => 'multiple_images_callback', // callback function, if inside object use array($object, 'callback_method')
 	'curl_connect_timeout' => 2, // curl therad connect timeout in seconds, def. 2
-	'curl_timeout' => 3 // curl thread timeout in seconds, def 3
+	'curl_timeout' => 3, // curl thread timeout in seconds, def 3
+	'curl_buffer_size' => 2056 // use 2056 bytes as buffer size in fetching jpeg images, default value is 256
 );
 
 echo "\n\n<br /><br /><hr />[line " . __LINE__ . "] mutiple with callback mode <br />\n";
