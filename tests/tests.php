@@ -13,6 +13,15 @@ class RimTest extends UnitTestCase
 	{
 		$rim = new rim();
 
+		// gif 1x1 test
+		$imageData = $rim->getSingleImageTypeAndSize('http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/pixel.gif');
+		$expectedData = array(
+			'type' => 'gif',
+			'width' => '1',
+			'height' => '1'
+		);
+		$this->assertEqual($imageData, $expectedData);
+
 		// png 8-bit test
 		$imageData = $rim->getSingleImageTypeAndSize('http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/png_8_test.png');
 		$expectedData = array(

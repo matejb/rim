@@ -99,6 +99,7 @@ class rim
 	 *	'callback' => (array) def: null, // callback to call after fetch of each image data
 	 *	'curl_connect_timeout' => (integer) def: 2, // curl therad connect timeout
 	 *	'curl_timeout' => (integer) def: 3 // curl thread timeout
+	 *	'curl_buffer_size' => (integer) def: 256 // size of buffer for jpeg images
 	 * )
 	 */
 	public function getSingleImageTypeAndSize($url, $options=array())
@@ -234,6 +235,7 @@ class rim
 
 					$options = array();
 					$options[CURLOPT_RANGE] = '6-13';
+
 					$this->_curlMulti->transfer($url, $options, array($this, '_gifReadCallback'), $callback_data);
 				}
 				break;
@@ -393,6 +395,12 @@ class rim
 	*/
 	public function _gifReadCallback($url, $recived_data, $status_code, &$callback_data, $transfer_error_details)
 	{
+		// server dose not Accept-Ranges
+		if (strlen($recived_data) > 8)
+		{
+			$recived_data = substr($recived_data, 6, 8);
+		}
+
 		$imageWH = unpack('vwidth/vheight', $recived_data);
 
 		if (empty($imageWH['width']))
@@ -421,6 +429,12 @@ class rim
 	*/
 	public function _pngReadCallback($url, $recived_data, $status_code, &$callback_data, $transfer_error_details)
 	{
+		// server dose not Accept-Ranges
+		if (strlen($recived_data) > 8)
+		{
+			$recived_data = substr($recived_data, 16, 8);
+		}
+
 		$imageWH = unpack('Nwidth/Nheight', $recived_data);
 
 		if (empty($imageWH['width']))
