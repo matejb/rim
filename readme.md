@@ -12,6 +12,7 @@ Supported image types are: JPEG, GIF, PNG
 
 Licensed under the [GNU Lesser General Public Licence version 3](http://www.gnu.org/licenses/lgpl-3.0.txt)
 
+
 Notes
 -----
 
@@ -88,3 +89,9 @@ Performance
 Fetching image types and sizes on [Hot New Releases in Books](http://www.amazon.com/gp/new-releases/books/ref=sv_b_2) page on amazon.com
 
 ![Time taken to fetch images](https://raw.github.com/MatejB/rim/master/tests/tests_resources/performance.jpg)
+
+
+Known issues
+------------
+
+1. If remote server is not accepting `Range` whole images will be downloaded and performance will drop. Multithreaded capabilities will give same performance benefits.
