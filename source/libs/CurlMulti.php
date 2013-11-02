@@ -33,7 +33,7 @@ class CurlMulti
 	/**
 	 * @var integer Curl buffer size
 	 */
-	public $curlBufferSize = 256;
+	public $curlBufferSize = 0;
 
 	/**
 	 * @var array Default curl thread options
@@ -96,6 +96,7 @@ class CurlMulti
 			if ($this->_stop) return;
 
 			$num_of_active_threads = 0;
+
 			$threads_process_status = curl_multi_exec($this->_curlMultiHandler, $num_of_active_threads);
 
 			do

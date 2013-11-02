@@ -24,6 +24,7 @@ class rim
 	 *	'callback' => (array) def: null, // callback to call after fetch of each image data
 	 *	'curl_connect_timeout' => (integer) def: 2, // curl therad connect timeout
 	 *	'curl_timeout' => (integer) def: 3 // curl thread timeout
+	 *	'curl_buffer_size' => (integer) def: 0 // size of buffer for jpeg images, if 0 will be auto calculated
 	 * )
 	 */
 	public function getMultiImageTypeAndSize($urls, $options = array())
@@ -39,7 +40,7 @@ class rim
 			'callback' => null,
 			'curl_connect_timeout' => 2,
 			'curl_timeout' => 3,
-			'curl_buffer_size' => 256
+			'curl_buffer_size' => 0
 		);
 		$options = ArrayFunctionHelper::arrayMerge($default_options, $options);
 
@@ -80,6 +81,7 @@ class rim
 			{
 				$images_data[$key]['trace'] = array();
 				$images_data[$key]['downloaded_size_trace'] = array();
+				$images_data[$key]['buffer_size_trace'] = array();
 			}
 
 			$this->_getImageData($images_data[$key]);
@@ -99,7 +101,7 @@ class rim
 	 *	'callback' => (array) def: null, // callback to call after fetch of each image data
 	 *	'curl_connect_timeout' => (integer) def: 2, // curl therad connect timeout
 	 *	'curl_timeout' => (integer) def: 3 // curl thread timeout
-	 *	'curl_buffer_size' => (integer) def: 256 // size of buffer for jpeg images
+	 *	'curl_buffer_size' => (integer) def: 0 // size of buffer for jpeg images, if 0 will be auto calculated
 	 * )
 	 */
 	public function getSingleImageTypeAndSize($url, $options=array())
@@ -111,7 +113,7 @@ class rim
 			'callback' => null,
 			'curl_connect_timeout' => 2,
 			'curl_timeout' => 3,
-			'curl_buffer_size' => 256
+			'curl_buffer_size' => 0
 		);
 		$options = ArrayFunctionHelper::arrayMerge($default_options, $options);
 
@@ -124,7 +126,7 @@ class rim
 		}
 		$this->_curlMulti->defaultCurlThreadOptions = array(
 			CURLOPT_RETURNTRANSFER 		=> true,       							// return body
-			CURLOPT_HEADER         		=> false,       						// return headers
+			CURLOPT_HEADER         		=> false,       					    // return headers
 			CURLOPT_BINARYTRANSFER		=> true,								// raw data
 			CURLOPT_FOLLOWLOCATION 		=> true,        						// follow redirects
 			CURLOPT_ENCODING       		=> "",          						// handle all encodings
@@ -219,14 +221,28 @@ class rim
 				{
 					$callback_data['image_data']['type'] = 'jpeg';
 
-					$options = array();
-					$options[CURLOPT_BUFFERSIZE] = $this->_curlMulti->curlBufferSize;
-					$options[CURLOPT_RETURNTRANSFER] = '';
-					$options[CURLOPT_WRITEFUNCTION] = array($this, "_jpegTransferCallback");
+					// do auto buffer for jpeg images
+					if (
+						0 === $this->_curlMulti->curlBufferSize
+					)
+					{
+						$options = array();
+						$options[CURLOPT_HEADER] = true;
+						$options[CURLOPT_RANGE] = '0-1';
 
-					$callback_data['streamed_buffer'] = '';
+						$this->_curlMulti->transfer($url, $options, array($this, '_jpegReadSizeCallback'), $callback_data);
+					}
+					else
+					{
+						$options = array();
+						$options[CURLOPT_BUFFERSIZE] = $this->_curlMulti->curlBufferSize;
+						$options[CURLOPT_RETURNTRANSFER] = '';
+						$options[CURLOPT_WRITEFUNCTION] = array($this, "_jpegTransferCallback");
 
-					$this->_curlMulti->transfer($url, $options, array($this, '_jpegReadCallback'), $callback_data);
+						$callback_data['streamed_buffer'] = '';
+
+						$this->_curlMulti->transfer($url, $options, array($this, '_jpegReadCallback'), $callback_data);
+					}
 				}
 				break;
 			case '4749': // gif
@@ -267,9 +283,9 @@ class rim
 	 * _jpegTransferCallback
 	 *
 	 * Curl data write buffer function.
-	 * Image dimension are on differnt position within a file
+	 * Image dimension are on different position within a file
 	 * so this function will be called when buffer is ready a jpeg can be composed in memory,
-	 * once dimension are known futher transfer of jpeg file ends.
+	 * once dimension are known further transfer of jpeg file ends.
 	 *
 	 * @internal Had to be public so CurlMulti can access it.
 	*/
@@ -287,7 +303,7 @@ class rim
 		if (isset($callback_data['downloaded_size_trace']))
 		{
 			$callback_data['downloaded_size_trace'][] = array(
-				strlen($callback_data['streamed_buffer'])
+				mb_strlen($callback_data['streamed_buffer'])
 			);
 		}
 
@@ -384,6 +400,48 @@ class rim
 		}
 
 		$this->_triggerCallback($callback_data);
+	}
+
+	/**
+	 * _jpegReadSizeCallback
+	 *
+	 * Will determine buffer size for fetching jpeg image based on it's size
+	 *
+	 * @internal Had to be public so CurlMulti can access it.
+	 */
+	public function _jpegReadSizeCallback($url, $recived_data, $status_code, &$callback_data, $transfer_error_details)
+	{
+		$buffer_size = 1024;
+
+		if (false !== strpos($recived_data, 'Content-Range:'))
+		{
+			$matches = array();
+			preg_match('~Content-Range:\sbytes\s0-1/(\d+)\s~i', $recived_data, $matches);
+			if (
+				isset($matches[1])
+				&& !empty($matches[1])
+			)
+			{
+				$image_size = intval($matches[1]);
+				$buffer_size = intval($image_size * 0.1); // transfer in 10% chunks
+
+				if (isset($callback_data['buffer_size_trace']))
+				{
+					$callback_data['buffer_size_trace'][] = array(
+						$buffer_size
+					);
+				}
+			}
+		}
+
+		$options = array();
+		$options[CURLOPT_BUFFERSIZE] = $buffer_size;
+		$options[CURLOPT_RETURNTRANSFER] = '';
+		$options[CURLOPT_WRITEFUNCTION] = array($this, "_jpegTransferCallback");
+
+		$callback_data['streamed_buffer'] = '';
+
+		$this->_curlMulti->transfer($url, $options, array($this, '_jpegReadCallback'), $callback_data);
 	}
 
 	/**

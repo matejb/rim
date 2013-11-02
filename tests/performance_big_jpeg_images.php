@@ -5,22 +5,30 @@ error_reporting(E_ALL);
 
 $collected_data = array();
 
-$image_urls = array();
-if ($dir_handler = opendir(dirname(__FILE__) . '/tests_resources/big_images'))
+$image_urls = array (
+	'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/red-flower-water-drops.jpg' => 'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/red-flower-water-drops.jpg',
+	'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/superman-logo.jpg' => 'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/superman-logo.jpg',
+	'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/golden-shasta-daisy.jpg' => 'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/golden-shasta-daisy.jpg',
+	'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/rare-blue-flowers.jpg' => 'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/rare-blue-flowers.jpg',
+	'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/porsche-918-rsr-front.jpg' => 'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/porsche-918-rsr-front.jpg',
+	'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/purple-arctic-flowers.jpg' => 'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/purple-arctic-flowers.jpg',
+	'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/hi-tech-planet.jpg' => 'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/hi-tech-planet.jpg',
+	'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/heart-flowers.jpg' => 'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/heart-flowers.jpg',
+	'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/house-on-the-hill.jpg' => 'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/house-on-the-hill.jpg',
+	'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/anglesey-flowers.jpg' => 'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/anglesey-flowers.jpg',
+	'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/horseshoe-bend-arizona.jpg' => 'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/horseshoe-bend-arizona.jpg',
+	'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/yellow-sun-flower-world.jpg' => 'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/yellow-sun-flower-world.jpg',
+	'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/2013-aston-martin-dbc-concept.jpg' => 'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/2013-aston-martin-dbc-concept.jpg',
+	'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/beautiful-red-tree-scene.jpg' => 'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/beautiful-red-tree-scene.jpg',
+	'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/pleasant-sunset.jpg' => 'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/pleasant-sunset.jpg',
+	'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/blue-matrix-binary.jpg' => 'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/blue-matrix-binary.jpg',
+	'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/unknown-destiny.jpg' => 'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['SCRIPT_NAME']) . '/tests_resources/big_images/unknown-destiny.jpg',
+);
+
+foreach ($image_urls as $single_image_url)
 {
-	while (false !== ($entry = readdir($dir_handler)))
-	{
-		$file_path = dirname(__FILE__) . '/tests_resources/big_images/' . $entry;
-
-		if (is_file($file_path))
-		{
-			$http_image_url = 'http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER['PHP_SELF']) . '/libs/force_download.php?name=' . urlencode($entry);
-			$image_urls[$http_image_url] = $http_image_url;
-
-			$collected_data['classic_size'][$http_image_url] = filesize($file_path);
-			$collected_data['classic_num_of_chunks'][$http_image_url] = 1;
-		}
-	}
+	$collected_data['classic_size'][$single_image_url] = mb_strlen(file_get_contents($single_image_url));
+	$collected_data['classic_num_of_chunks'][$single_image_url] = 1;
 }
 
 // rest of the code
@@ -46,8 +54,7 @@ foreach ($image_urls as $img_url)
 $rim = new rim();
 $rim->profile = true;
 $rim_options = array(
-	'max_num_of_threads' => 1,
-	'curl_buffer_size' => 256
+	'max_num_of_threads' => 1
 );
 
 $images_data = $rim->getMultiImageTypeAndSize($image_urls, $rim_options);
@@ -58,7 +65,7 @@ foreach ($images_data as $img_data)
 
 	$collected_data['rim_1_num_of_chunks'][$img_data['url']] = sizeof($img_data['downloaded_size_trace']);
 
-	$last_trace_data = array_pop($img_data['trace']); // becouse image can be fetched in several steps
+	$last_trace_data = array_pop($img_data['trace']); // because image can be fetched in several steps
 	$collected_data['rim_1_thread'][$img_data['url']] = $last_trace_data['time'];
 
 	$last_size = array_pop($img_data['downloaded_size_trace']);
@@ -67,8 +74,7 @@ foreach ($images_data as $img_data)
 
 // 10 thread rim
 $rim_options = array(
-	'max_num_of_threads' => 10,
-	'curl_buffer_size' => 3072
+	'max_num_of_threads' => 10
 );
 
 $images_data = $rim->getMultiImageTypeAndSize($image_urls, $rim_options);
@@ -96,10 +102,6 @@ foreach ($images_data as $img_data)
 	$last_size = array_pop($img_data['downloaded_size_trace']);
 	$collected_data['rim_10_size'][$img_data['url']] = $last_size[0];
 }
-
-//echo '<pre>';
-//var_dump($collected_data);
-//echo '</pre>';
 
 ?>
 <html>
