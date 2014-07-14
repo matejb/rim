@@ -13,6 +13,7 @@ Supported image types are: JPEG, GIF, PNG
 Licensed under the [GNU Lesser General Public Licence version 3](http://www.gnu.org/licenses/lgpl-3.0.txt)
 
 
+
 Notes
 -----
 
@@ -29,11 +30,16 @@ Quick examples:
 	// single image
     $image_data = $rim->getSingleImageTypeAndSize('http://domain/path_to_png_file.png');
 
-	// this will $image_data contain
+	// this will $image_data contain on success
     $image_data = array(
         'type' => 'png',
         'width' => '450',
         'height' => '320'
+    );
+    
+    // if the function fails, this will $image_data contain
+    $image_data = array(
+    	'error' => // information about the error. see https://github.com/MatejB/rim/blob/master/source/rim.php#L148
     );
 
 	// multiple image fetch
